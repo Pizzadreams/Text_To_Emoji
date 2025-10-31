@@ -36,17 +36,3 @@ if submitted:
     else:
         emoji_text = text_to_custom_emojis(user_text)
         st.markdown(f"### Emoji Translation:\n\n{emoji_text}")
-
-
-
-with st.form("emoji_form"):
-    user_text = st.text_input("Enter text to translate (try using emoji shortcodes like ':rocket:' or ':smile:')")
-    submitted = st.form_submit_button("Submit")
-
-if submitted:
-    if not user_text.strip():
-        st.warning("Please enter some text before submitting.")
-    else:
-        # Convert all emoji shortcodes in the sentence to emojis
-        emoji_text = emoji.emojize(user_text, language='alias')
-        st.markdown(f"### Emoji Translation:\n\n{emoji_text}")
