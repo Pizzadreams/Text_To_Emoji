@@ -1,17 +1,17 @@
 import streamlit as st
-import emoji
-import components 
-
+from emoji_converter import text_to_custom_emojis, get_random_emojis
 
 def main():
-    st.set_page_config(
-        page_icon=":robot_face:",
-        layout="wide",
-        page_title="Text to Emoji Translator",
-        initial_sidebar_state="auto"
-    )
-    
-    components.render_content()
+    st.title("Text to Emoji Translator")
+
+    user_text = st.text_input("Enter text to translate", placeholder="Type a phrase here...")
+
+    if user_text:
+        emoji_text = text_to_custom_emojis(user_text)
+        st.markdown(f"### Emoji Translation:\n\n{emoji_text}")
+
+        r_emojis = get_random_emojis(5)
+        st.write("Random Emojis from API:", " ".join(r_emojis))
 
 if __name__ == "__main__":
     main()
