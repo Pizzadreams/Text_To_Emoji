@@ -1,5 +1,5 @@
 streamlit
 requests
-emoji==1.7.0
+emoji
 emoji_converter
 thefuzz[speedup]
