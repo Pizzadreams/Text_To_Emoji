@@ -1,7 +1,7 @@
 # Text to Emoji Translator
 
 ## Project Overview
-This project aims to create an interactive web application that translates human-readable text into emoji-rich messages. Users can enter natural language text, and the app intelligently converts words or phrases into corresponding emojis to make the communication fun and visually engaging.
+This project aims to create an interactive web application that translates human-readable text into emoji-rich messages. Users can enter natural language text, and the app converts words or phrases into corresponding emojis to make the communication fun and visually engaging.
 
 ## Key Features
 - **Text Input:** Users enter any sentence or phrase into a simple web interface.
