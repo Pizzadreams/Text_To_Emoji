@@ -2,3 +2,4 @@ streamlit
 requests
 emoji
 emoji_converter
+thefuzz[speedup]
