@@ -2,62 +2,107 @@ import streamlit as st
 import emoji
 from thefuzz import process
 
-# Function to extract all emoji aliases (shortcodes) from the emoji library
-def get_all_aliases():
-    aliases = []
-    # Iterate over all emoji data entries in the emoji library
-    for data in emoji.EMOJI_DATA.values():
-        # Each emoji may have multiple aliases (shortcodes without colons)
-        for a in data.get('alias', []):
-            # Format alias with colons to match emoji.emojize() syntax, e.g. ":smile:"
-            aliases.append(f":{a}:")
-    return aliases
+# Extensive mapping of keywords/phrases to emoji shortcodes
+# You can expand this dictionary as needed for your use case
+EMOJI_MAPPING = {
+    "happy": ":smile:",
+    "sad": ":cry:",
+    "love": ":heart:",
+    "fire": ":fire:",
+    "party": ":tada:",
+    "cat": ":cat:",
+    "dog": ":dog:",
+    "rocket": ":rocket:",
+    "money": ":moneybag:",
+    "food": ":pizza:",
+    "music": ":musical_note:",
+    "sun": ":sunny:",
+    "moon": ":crescent_moon:",
+    "star": ":star:",
+    "car": ":car:",
+    "red": ":red_circle:",
+    "bull": ":ox:",
+    "wings": ":angel:",
+    "drink": ":tropical_drink:",
+    "sports": ":basketball:",
+    "computer": ":computer:",
+    "phone": ":iphone:",
+    "book": ":book:",
+    "sleep": ":sleeping:",
+    "work": ":briefcase:",
+    "school": ":school:",
+    "travel": ":airplane:",
+    "coffee": ":coffee:",
+    "cake": ":cake:",
+    "gift": ":gift:",
+    "rain": ":cloud_rain:",
+    "snow": ":snowflake:",
+    "angry": ":angry:",
+    "surprised": ":open_mouth:",
+    "cool": ":sunglasses:",
+    "laugh": ":joy:",
+    "cry": ":sob:",
+    "kiss": ":kissing_heart:",
+    "clap": ":clap:",
+    "ok": ":ok_hand:",
+    "thumbs up": ":thumbsup:",
+    "thumbs down": ":thumbsdown:",
+    "question": ":question:",
+    "exclamation": ":exclamation:",
+    "eye": ":eyes:",
+    "butterfly": ":butterfly:",
+    "mountain": ":mountain:",
+    "brain": ":brain:",
+    "link": ":link:",
+    "egg": ":egg:",
+    "clock": ":clock2:",
+    "star": ":star:",
+    "key": ":key:",
+    "prince": ":prince:",
+    "blue": ":blue_heart:",
+    "adult": ":adult:",
+    # To Do: Add more mappings as needed
+}
 
-# Precompute the list of all emoji aliases once for efficiency
-emoji_aliases = get_all_aliases()
+# Precompute the list of emoji shortcodes for fuzzy matching
+emoji_aliases = list(EMOJI_MAPPING.values())
 
-# Function to find the best fuzzy matching emoji alias for a single word
 def fuzzy_emoji_for_word(word, aliases, threshold=70):
-    # Use fuzzy matching to find the closest alias to the input word
-    match = process.extractOne(word, aliases)
-    # If a match is found and similarity score exceeds threshold, convert to emoji
+    """
+    For a given word, find the closest matching emoji shortcode using fuzzy matching.
+    If a good match is found (score >= threshold), convert shortcode to emoji character.
+    Otherwise, return the original word.
+    """
+    match = process.extractOne(word.lower(), aliases)
     if match and match[1] >= threshold:
-        alias_or_emoji = match[0]
-        # Check if the matched string is a shortcode (starts and ends with colon)
-        if alias_or_emoji.startswith(":") and alias_or_emoji.endswith(":"):
-            # Convert shortcode alias to emoji character (e.g., ":smile:" -> 😄)
-            return emoji.emojize(alias_or_emoji, language='alias')
-        else:
-            # If already an emoji character, return it as is
-            return alias_or_emoji
+        shortcode = match[0]  # e.g. ":smile:"
+        # Convert shortcode to emoji character
+        return emoji.emojize(shortcode, language='alias')
     else:
-        # No good match found, return the original word unchanged
         return word
 
-# Function to convert an entire sentence by replacing words with emojis where possible
 def sentence_to_emojis(sentence, aliases, threshold=70):
-    # Split the sentence into individual words (simple split, can be improved for punctuation)
+    """
+    Convert each word in the sentence to an emoji if a close match is found.
+    Words without good matches remain unchanged.
+    """
     words = sentence.split()
-    # Replace each word with its fuzzy matched emoji or keep original word
     result = [fuzzy_emoji_for_word(word, aliases, threshold) for word in words]
-    # Join the transformed words back into a single string separated by spaces
     return ' '.join(result)
 
 # Streamlit app title
-st.title("Fuzzy Sentence-to-Emoji Translator")
+st.title("Text to Emoji Translator")
 
-# Create a form for user input to allow submission via Enter key or button
+# Input form for user sentence
 with st.form("emoji_form"):
     user_text = st.text_input("Enter a sentence (e.g., 'Red bull gives you wings')")
     submitted = st.form_submit_button("Submit")
 
-# When the form is submitted
 if submitted:
     if not user_text.strip():
-        # Warn user if input is empty or only whitespace
         st.warning("Please enter some text before submitting.")
     else:
-        # Convert the input sentence to emojis using fuzzy matching
+        # Translate sentence to emojis using fuzzy matching against the extended mapping
         emoji_sentence = sentence_to_emojis(user_text, emoji_aliases, threshold=70)
-        # Display the emoji-translated sentence without colons around emojis
+        # Display the emoji-translated sentence
         st.markdown(f"### Emoji Translation:\n\n{emoji_sentence}")
